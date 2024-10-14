@@ -460,6 +460,7 @@ class MacDistributionBuilder(
     val architecture = when (arch) {
       JvmArchitecture.x64 -> "x86_64"
       JvmArchitecture.aarch64 -> "arm64"
+      JvmArchitecture.riscv64 -> "riscv64"
     }
     val todayYear = LocalDate.now().year.toString()
 

@@ -4,9 +4,11 @@ package org.jetbrains.intellij.build.dependencies
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.intellij.build.downloadFileToCacheLocation
+import java.lang.System;
 import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.logging.Logger
 
 /**
@@ -41,11 +43,7 @@ object JdkDownloader {
     infoLog: (String) -> Unit,
   ): Path {
     val jdkUrl = getUrl(communityRoot = communityRoot, os = os, arch = arch, jdkBuildNumber = jdkBuildNumber, variation = variation)
-    val jdkArchive = downloadFileToCacheLocation(url = jdkUrl.toString(), communityRoot = communityRoot)
-    val jdkExtracted = BuildDependenciesDownloader.extractFileToCacheLocation(communityRoot = communityRoot,
-                                                                              archiveFile = jdkArchive,
-                                                                              BuildDependenciesExtractOptions.STRIP_ROOT)
-    val jdkHome = if (os == OS.MACOSX) jdkExtracted.resolve("Contents").resolve("Home") else jdkExtracted
+    val jdkHome: Path = Paths.get(System.getenv("JAVA_HOME"))
     infoLog("JPS-bootstrap JDK (jdkHome=$jdkHome, executable=${getJavaExecutable(jdkHome)})")
     return jdkHome
   }
@@ -71,6 +69,7 @@ object JdkDownloader {
     val archString: String = when (arch) {
       Arch.X86_64 -> "x64"
       Arch.ARM64 -> "aarch64"
+      Arch.RISCV64 -> "riscv64"
     }
 
     val variationSuffix = if (variation == null) "" else "_$variation"
@@ -112,7 +111,8 @@ object JdkDownloader {
 
   enum class Arch {
     X86_64,
-    ARM64;
+    ARM64,
+    RISCV64;
 
     companion object {
       val current: Arch
@@ -120,6 +120,7 @@ object JdkDownloader {
           val arch = System.getProperty("os.arch").lowercase()
           if ("x86_64" == arch || "amd64" == arch) return X86_64
           if ("aarch64" == arch || "arm64" == arch) return ARM64
+          if ("riscv64" == arch) return RISCV64
           throw IllegalStateException("Only X86_64 and ARM64 are supported, current arch: $arch")
         }
     }

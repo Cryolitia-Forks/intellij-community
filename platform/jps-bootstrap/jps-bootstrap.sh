@@ -84,6 +84,9 @@ if [ "$darwin" = "true" ]; then
       arm64)
         JBR_ARCH=osx-aarch64
         ;;
+      riscv64)
+        JBR_ARCH=osx-riscv64
+        ;;
       *)
         die "Unknown architecture $(uname -m)"
         ;;
@@ -95,6 +98,9 @@ else
         ;;
       aarch64)
         JBR_ARCH=linux-aarch64
+        ;;
+      riscv64)
+        JBR_ARCH=linux-riscv64
         ;;
       *)
         die "Unknown architecture $(uname -m)"
@@ -111,31 +117,10 @@ if [ -e "$JVM_TARGET_DIR/.flag" ] && [ -n "$(ls "$JVM_TARGET_DIR")" ] && [ "x$(c
     # Everything is up-to-date in $JVM_TARGET_DIR, do nothing
     true
 else
-  JVM_TEMP_FILE=$(mktemp "$JPS_BOOTSTRAP_PREPARE_DIR/jvm.tar.gz.XXXXXXXXX")
-  trap 'echo "Removing $JVM_TEMP_FILE"; rm -f "$JVM_TEMP_FILE"; trap - EXIT' EXIT INT HUP
-
-  warn "Downloading $JVM_URL to $JVM_TEMP_FILE"
-
-  if command -v curl >/dev/null 2>&1; then
-      if [ -t 1 ]; then CURL_PROGRESS="--progress-bar"; else CURL_PROGRESS=""; fi
-      CURL_OPTIONS="-fsSL"
-      if [ "${JBR_DOWNLOAD_CURL_VERBOSE:-false}" = "true" ]; then CURL_OPTIONS="-fvL"; fi
-      # CURL_PROGRESS may be empty, with quotes this interpreted by curl as malformed URL
-      # shellcheck disable=SC2086
-      expBackOffRetry curl "$CURL_OPTIONS" $CURL_PROGRESS --output "${JVM_TEMP_FILE}" "$JVM_URL"
-  elif command -v wget >/dev/null 2>&1; then
-      if [ -t 1 ]; then WGET_PROGRESS=""; else WGET_PROGRESS="-nv"; fi
-      expBackOffRetry wget $WGET_PROGRESS -O "${JVM_TEMP_FILE}" "$JVM_URL"
-  else
-      die "ERROR: Please install wget or curl"
-  fi
-
-  warn "Extracting $JVM_TEMP_FILE to $JVM_TARGET_DIR"
   rm -rf "$JVM_TARGET_DIR"
   mkdir -p "$JVM_TARGET_DIR"
 
-  tar -x -f "$JVM_TEMP_FILE" -C "$JVM_TARGET_DIR"
-  rm -f "$JVM_TEMP_FILE"
+  ln -sf /usr/lib/jvm/java-17-openjdk "$JVM_TARGET_DIR"
 
   echo "$JVM_URL" >"$JVM_TARGET_DIR/.flag"
 fi

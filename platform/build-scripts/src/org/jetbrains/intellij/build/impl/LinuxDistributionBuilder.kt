@@ -52,7 +52,7 @@ class LinuxDistributionBuilder(
         val distBinDir = targetPath.resolve("bin")
         val sourceBinDir = context.paths.communityHomeDir.resolve("bin/linux")
         addNativeLauncher(distBinDir, targetPath, arch)
-        copyFileToDir(NativeBinaryDownloader.getRestarter(context, OsFamily.LINUX, arch), distBinDir)
+        copyFileToDir(sourceBinDir.resolve("../../native/restarter/target/release/restarter"), distBinDir)
         copyFileToDir(sourceBinDir.resolve("${arch.dirName}/fsnotifier"), distBinDir)
         copyFileToDir(sourceBinDir.resolve("${arch.dirName}/libdbm.so"), distBinDir)
         generateBuildTxt(context, targetPath)
@@ -99,37 +99,6 @@ class LinuxDistributionBuilder(
               buildTarGz(arch, runtimeDir = null, unixDistPath = osAndArchSpecificDistPath, suffix = NO_RUNTIME_SUFFIX + suffix(arch))
             }
           }
-        }
-      }
-
-      val runtimeDir = context.bundledRuntime.extract(os = OsFamily.LINUX, arch = arch)
-      updateExecutablePermissions(runtimeDir, executableFileMatchers)
-      val tarGzPath: Path? = context.executeStep(
-        spanBuilder("Build Linux .tar.gz with bundled Runtime")
-          .setAttribute("arch", arch.name)
-          .setAttribute("runtimeDir", runtimeDir.toString()),
-        "linux_tar_gz_${arch.name}"
-      ) { _ ->
-        buildTarGz(arch, runtimeDir, osAndArchSpecificDistPath, suffix(arch))
-      }
-      launch {
-        if (arch == JvmArchitecture.x64) {
-          buildSnapPackage(runtimeDir, osAndArchSpecificDistPath, arch)
-        }
-        else {
-          // TODO: Add snap for aarch64
-          Span.current().addEvent("skip building Snap packages for non-x64 arch")
-        }
-      }
-
-      if (tarGzPath != null && !context.isStepSkipped(BuildOptions.REPAIR_UTILITY_BUNDLE_STEP)) {
-        val tempTar = Files.createTempDirectory(context.paths.tempDir, "tar-")
-        try {
-          unTar(tarGzPath, tempTar)
-          RepairUtilityBuilder.generateManifest(context, unpackedDistribution = tempTar.resolve(rootDirectoryName), OsFamily.LINUX, arch)
-        }
-        finally {
-          NioFiles.deleteRecursively(tempTar)
         }
       }
     }

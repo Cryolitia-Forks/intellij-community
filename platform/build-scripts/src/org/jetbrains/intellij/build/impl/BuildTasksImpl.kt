@@ -132,6 +132,7 @@ val SUPPORTED_DISTRIBUTIONS: List<SupportedDistribution> = listOf(
   SupportedDistribution(os = OsFamily.WINDOWS, arch = JvmArchitecture.aarch64),
   SupportedDistribution(os = OsFamily.LINUX, arch = JvmArchitecture.x64),
   SupportedDistribution(os = OsFamily.LINUX, arch = JvmArchitecture.aarch64),
+  SupportedDistribution(os = OsFamily.LINUX, arch = JvmArchitecture.riscv64),
 )
 
 fun createIdeaPropertyFile(context: BuildContext): CharSequence {

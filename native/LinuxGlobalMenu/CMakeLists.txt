@@ -29,10 +29,10 @@ MESSAGE("LIB_GIO: " ${LIB_GIO})
 find_library(LIB_GOBJ NAMES libgobject-2.0.so.0)
 MESSAGE("LIB_GOBJ: " ${LIB_GOBJ})
 
-# use patched library, you may build it from https://github.com/JetBrains/libdbusmenu
-set(LIB_DBUSMENU "${PROJECT_SOURCE_DIR}/libdbusmenu-glib.a")
+find_library(LIB_DBUSMENU NAMES libdbusmenu-glib.so.4)
+MESSAGE("LIB_DBUSMENU: " ${LIB_DBUSMENU})
 
-set(GLIB_INCLUDE_DIRS /usr/include/glib-2.0 /usr/lib64/glib-2.0/include)
+set(GLIB_INCLUDE_DIRS /usr/include/glib-2.0 /usr/lib64/glib-2.0/include /usr/lib/glib-2.0/include)
 set(DBUSMENU_GLIB_INCLUDE_DIRS /usr/include/libdbusmenu-glib-0.4)
 
 include_directories(

@@ -166,6 +166,7 @@ private fun getArchSuffix(arch: JvmArchitecture): String {
   return when (arch) {
     JvmArchitecture.x64 -> "x64"
     JvmArchitecture.aarch64 -> "aarch64"
+    JvmArchitecture.riscv64 -> "riscv64"
   }
 }
 

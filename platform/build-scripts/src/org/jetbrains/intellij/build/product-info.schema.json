@@ -59,7 +59,7 @@
           "arch": {
             "description": "CPU Architecture this launch method is supposed to be used for",
             "type": "string",
-            "enum": ["amd64", "aarch64"]
+            "enum": ["amd64", "aarch64", "riscv64"]
           },
           "launcherPath": {
             "description": "Path to an executable file which starts the IDE (relative to the parent directory of this file, '/' as a separator, may start with '../'), e.g. 'bin/idea.sh'",

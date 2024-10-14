@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public enum CpuArch {
-  X86(32), X86_64(64), ARM32(32), ARM64(64), OTHER(0), UNKNOWN(0);
+  X86(32), X86_64(64), ARM32(32), ARM64(64), RISCV64(64), OTHER(0), UNKNOWN(0);
 
   /**
    * Machine word size, in bits.
@@ -40,6 +40,7 @@ public enum CpuArch {
     if ("x86_64".equals(arch) || "amd64".equals(arch)) return X86_64;
     if ("i386".equals(arch) || "x86".equals(arch)) return X86;
     if ("aarch64".equals(arch) || "arm64".equals(arch)) return ARM64;
+    if ("riscv64".equals(arch)) return RISCV64;
     return arch == null || arch.trim().isEmpty() ? UNKNOWN : OTHER;
   }
 
@@ -47,6 +48,7 @@ public enum CpuArch {
   public static boolean isIntel64() { return CURRENT == X86_64; }
   public static boolean isArm32() { return CURRENT == ARM32; }
   public static boolean isArm64() { return CURRENT == ARM64; }
+  public static boolean isRiscv64() { return CURRENT == RISCV64; }
 
   public static boolean is32Bit() { return CURRENT.width == 32; }
 

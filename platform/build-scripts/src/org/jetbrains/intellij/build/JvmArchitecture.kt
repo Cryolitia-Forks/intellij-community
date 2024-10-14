@@ -6,7 +6,8 @@ import com.intellij.util.system.CpuArch
 @Suppress("EnumEntryName")
 enum class JvmArchitecture(@JvmField val archName: String, @JvmField val fileSuffix: String, @JvmField val dirName: String) {
   x64("X86_64", "64", "amd64"),
-  aarch64("AArch64", "aarch64", "aarch64");
+  aarch64("AArch64", "aarch64", "aarch64"),
+  riscv64("RISC-V64", "riscv64", "riscv64");
 
   companion object {
     @JvmField
@@ -16,6 +17,7 @@ enum class JvmArchitecture(@JvmField val archName: String, @JvmField val fileSuf
     val currentJvmArch: JvmArchitecture = when {
       CpuArch.isArm64() -> aarch64
       CpuArch.isIntel64() -> x64
+      CpuArch.isRiscv64() -> riscv64
       else -> throw IllegalStateException("Unsupported arch: " + CpuArch.CURRENT)
     }
   }

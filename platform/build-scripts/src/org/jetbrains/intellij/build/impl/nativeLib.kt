@@ -215,6 +215,7 @@ private fun extractFileToDisk(file: Path, zipFile: ZipFile, pathWithPackage: Str
 private enum class NativeFileArchitecture(@JvmField val jvmArch: JvmArchitecture?) {
   X_64(JvmArchitecture.x64),
   AARCH_64(JvmArchitecture.aarch64),
+  RISCV_64(JvmArchitecture.riscv64),
   // universal native file can be used by any platform
   UNIVERSAL(null);
 
@@ -230,6 +231,7 @@ private fun determineArch(os: OsFamily, path: CharSequence): NativeFileArchitect
   return when {
     osAndArch.endsWith("-aarch64") || path.contains("/aarch64/") -> AARCH_64
     path.contains("x86-64") || path.contains("x86_64") -> X_64
+    osAndArch.endsWith("-riscv64") || path.contains("/riscv64/") -> RISCV_64
     os == OsFamily.MACOS && path.count { it == '/' } == 1 -> UNIVERSAL
     !osAndArch.contains('-') && path.count { it == '/' } == 1 -> X_64
     else -> null

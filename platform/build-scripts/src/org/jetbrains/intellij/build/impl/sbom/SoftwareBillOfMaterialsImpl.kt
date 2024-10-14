@@ -267,14 +267,17 @@ internal class SoftwareBillOfMaterialsImpl(
       OsFamily.LINUX -> when (arch) {
         JvmArchitecture.aarch64 -> "linuxarm64"
         JvmArchitecture.x64 -> "linux64"
+        JvmArchitecture.riscv64 -> "linuxriscv64"
       }
       OsFamily.MACOS -> when (arch) {
         JvmArchitecture.aarch64 -> "macosarm64"
         JvmArchitecture.x64 -> "macosx64"
+        JvmArchitecture.riscv64 -> "macosriscv64"
       }
       OsFamily.WINDOWS -> when (arch) {
         JvmArchitecture.aarch64 -> "windowsarm64"
         JvmArchitecture.x64 -> "windows64"
+        JvmArchitecture.riscv64 -> "windowsriscv64"
       }
     }
     val cefArchive = "cef_binary_${cefVersion}_$cefSuffix.tar.bz2"
@@ -342,7 +345,7 @@ internal class SoftwareBillOfMaterialsImpl(
       document.documentDescribes.add(rootPackage)
       generate(
         document, rootPackage,
-        runtimePackage = document.runtimePackage(os, arch),
+        runtimePackage = null,
         distributionDir = distributionDir,
         // distributions weren't built
         claimContainedFiles = false
